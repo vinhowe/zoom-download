@@ -1,0 +1,12 @@
+[
+    {
+	"name": "example_important_meeting",
+	"url": "https://acme.zoom.us/rec/share/abcdefgHIJKLMNOP_1234567",
+	"password": "r@nd0m" 
+    },
+    {
+    	"name": "hypothetical_discussion_group",
+	"url": "https://acme.zoom.us/rec/share/ABCDEFGhijklmnop_1234567",
+	"password": "s3cr3t" 
+    }
+]
