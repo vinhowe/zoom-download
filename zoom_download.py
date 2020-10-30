@@ -4,7 +4,6 @@ from time import sleep
 import json
 import os
 
-DEFAULT_QUEUE_FILENAME = "queue.json"
 DEFAULT_OUTPUT_PATH = "."
 
 # This seems unlikely to change in the near future
