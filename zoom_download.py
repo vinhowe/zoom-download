@@ -5,7 +5,6 @@ import json
 import os
 import glob
 
-DEFAULT_QUEUE_FILENAME = "queue.json"
 DEFAULT_OUTPUT_PATH = "."
 
 # This seems unlikely to change in the near future
