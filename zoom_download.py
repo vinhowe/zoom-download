@@ -3,6 +3,7 @@ from playwright import sync_playwright
 from time import sleep
 import json
 import os
+import glob
 
 DEFAULT_QUEUE_FILENAME = "queue.json"
 DEFAULT_OUTPUT_PATH = "."
@@ -11,7 +12,7 @@ DEFAULT_OUTPUT_PATH = "."
 FILE_COUNT = 3
 
 
-def do_download(playwright, input_file, output_path):
+def do_download(playwright, input_file, output_path, force):
 
     try:
         with open(input_file) as input_file:
@@ -23,8 +24,18 @@ def do_download(playwright, input_file, output_path):
     browser = playwright.chromium.launch(headless=True)
     context = browser.newContext(acceptDownloads=True)
 
-    for item in queue:
+    for item in filter(lambda v: not "downloaded" in v or not v["downloaded"], queue):
         print(f"Downloading files for \"{item['name']}\":")
+
+        if not force:
+            existing_downloads = glob.glob(
+                f"{os.path.join(output_path, item['name'])}*"
+            )
+            if existing_downloads:
+                print(
+                    f"Found downloads for {item['name']}: {', '.join(existing_downloads)}, use -f to overwrite"
+                )
+                continue
 
         page = context.newPage()
         page.goto(item["url"])
@@ -56,9 +67,9 @@ def do_download(playwright, input_file, output_path):
     print("Done")
 
 
-def download(input_file, output_path):
+def download(input_file, output_path, force=False):
     with sync_playwright() as playwright:
-        do_download(playwright, input_file, output_path)
+        do_download(playwright, input_file, output_path, force)
 
 
 if __name__ == "__main__":
@@ -77,7 +88,13 @@ if __name__ == "__main__":
         default=DEFAULT_OUTPUT_PATH,
         help="output directory",
     )
+    parser.add_argument(
+        "-f",
+        "--force",
+        action="store_true",
+        help="overwrite existing downloads",
+    )
 
     args = parser.parse_args()
 
-    download(args.input, args.output)
+    download(args.input, args.output, args.force)
